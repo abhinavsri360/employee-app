@@ -1,12 +1,16 @@
 import React from 'react'
 import './App.css'
-import Button from 'react-bootstrap/Button'
+// import Button from 'react-bootstrap/Button'
+import Home from './components/Home'
+import Department from './components/Department'
+import Employee from './components/Employee'
 
 function App () {
   return (
     <div className='App'>
-      <h1>Hello</h1>
-      <Button variant="primary">YO</Button>
+      <Home />
+      <Department />
+      <Employee />
     </div>
   )
 }
