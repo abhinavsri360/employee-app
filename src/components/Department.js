@@ -26,12 +26,12 @@ class Department extends Component {
     return (
       <div>
         <Table className='mt-4' striped bordered hover size='sm'>
-          <thred>
+          <thead>
             <tr>
               <th>Department ID</th>
               <th>Department Name</th>
             </tr>
-          </thred>
+          </thead>
           <tbody>
             {deps.map(dep =>
               <tr key={dep.ID}>
