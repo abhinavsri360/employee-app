@@ -3,11 +3,19 @@ import { Modal, Button, Row, Col, Form } from 'react-bootstrap'
 import Snackbar from '@material-ui/core/Snackbar'
 import IconButton from '@material-ui/core/IconButton'
 
-class AddDepartmentModel extends Component {
+class AddEmpModal extends Component {
   constructor (props) {
     super(props)
-    this.state ={snackbaropen: false, snackbarmsg:''}
+    this.state = { deps: [], snackbaropen: false, snackbarmsg: '' }
     this.handleSubmit = this.handleSubmit.bind(this)
+  }
+
+  componentDidMount(){
+      fetch('https://localhost:44325/api/Employee')
+      .then(response => response.json())
+      .then(data => {
+          this.setState({deps:data})
+      })
   }
 
   snackbarClose = (event) => {
@@ -17,15 +25,18 @@ class AddDepartmentModel extends Component {
   handleSubmit (event) {
     event.preventDefault()
 
-    fetch('https://localhost:44325/api/Department', {
-      method: 'POST',
+    fetch('https://localhost:44325/api/Employee', {
+      method: 'PUT',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        ID: null,
-        DeptName: event.target.DeptName.value
+        ID: event.target.ID.value,
+        EmpName: event.target.EmpName.value,
+        DeptName: event.target.DeptName.value,
+        Mail: event.target.Mail.value,
+        DOJ: event.target.DOJ.value
       })
     },
     {
@@ -63,19 +74,40 @@ class AddDepartmentModel extends Component {
       >
         <Modal.Header closeButton>
           <Modal.Title id='contained-modal-title-vcenter'>
-          Add Department
+          Edit Employee
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
             <Row>
               <Col sm={6}>
                 <Form onSubmit={this.handleSubmit}>
+                <Form.Group controlId='ID'>
+                    <Form.Label>Employee ID</Form.Label>
+                    <Form.Control type='text' name='ID' required placeholder='Employee ID' disabled />
+                  </Form.Group>
+                  
+                  <Form.Group controlId='EmpName'>
+                    <Form.Label>Employee Name</Form.Label>
+                    <Form.Control type='text' name='EmpName' required placeholder='Employee Name' />
+                  </Form.Group>
+
                   <Form.Group controlId='DeptName'>
                     <Form.Label>Department Name</Form.Label>
-                    <Form.Control type='text' name='DeptName' required placeholder='Department Name' />
+                    <Form.Control as='select'>{this.state.deps.map(dep => <option key={dep.ID}>{dep.Dept}</option>)}</Form.Control>
                   </Form.Group>
+
+                  <Form.Group controlId='Mail'>
+                    <Form.Label>Mail Name</Form.Label>
+                    <Form.Control type='text' name='Mail' required placeholder='Mail ID' />
+                  </Form.Group>
+
+                  <Form.Group controlId='DOJ'>
+                    <Form.Label>Date of Joining</Form.Label>
+                    <Form.Control type='date' name='DOJ' required placeholder='Date of Joining' />
+                  </Form.Group>
+
                   <Form.Group>
-                    <Button variant='primary' type='submit'>Add Department</Button>
+                    <Button variant='primary' type='submit'>Update Employee</Button>
                   </Form.Group>
                 </Form>
               </Col>
@@ -90,4 +122,4 @@ class AddDepartmentModel extends Component {
   }
 }
 
-export default AddDepartmentModel
+export default AddEmpModal

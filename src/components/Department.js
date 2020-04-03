@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import { Table , Button, ButtonToolbar } from 'react-bootstrap'
+import { Table, Button, ButtonToolbar } from 'react-bootstrap'
 import AddDepartment from './AddDepartmentModel'
+import EditDepModal from './EditDepModal'
 
 class Department extends Component {
   constructor (props) {
     super(props)
 
-    this.state = { deps: [], addModalShow: false }
+    this.state = { deps: [], addModalShow: false, editModalShow: false }
   }
 
   componentDidMount () {
@@ -20,9 +21,23 @@ class Department extends Component {
       })
   }
 
+  componentDidUpdate () {
+    this.refreshList()
+  }
+
+  deleteDep (ID) {
+    if (window.confirm('Are you sure?')) {
+      fetch('https://localhost:44325/api/Department/' + ID, {
+        method: 'DELETE',
+        header: { Accept: 'application/json', 'Content-Type': 'application/json' }
+      })
+    }
+  }
+
   render () {
-    const { deps } = this.state
+    const { deps, ID, DeptName } = this.state
     const addModalClose = () => this.setState({ addModalShow: false })
+    const editModalClose = () => this.setState({ editModalShow: false })
     return (
       <div>
         <Table className='mt-4' striped bordered hover size='sm'>
@@ -30,6 +45,7 @@ class Department extends Component {
             <tr>
               <th>Department ID</th>
               <th>Department Name</th>
+              <th>Options</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +53,13 @@ class Department extends Component {
               <tr key={dep.ID}>
                 <td>{dep.ID}</td>
                 <td>{dep.DeptName}</td>
+                <td>
+                  <ButtonToolbar>
+                    <Button className='mr-2' variant='info' onClick={() => this.setState({ editModalShow: true, ID: dep.ID, DeptName: dep.DeptName })}>Edit</Button>
+                    <Button className='mr-2' variant='danger' onClick={() => this.deleteDep(dep.ID)}>delete</Button>
+                    <EditDepModal show={this.state.editModalShow} onHide={editModalClose} ID={ID} DeptName={DeptName} />
+                  </ButtonToolbar>
+                </td>
               </tr>
             )}
           </tbody>
